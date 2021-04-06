@@ -8,7 +8,7 @@ let angle = 0;
 let hue = 0;
 let frame = 0;
 let score = 0;
-let gameSpeed = 2;
+let gameSpeed = 5;
 let rectPos = {
     x: 10,
     y: 10
@@ -20,10 +20,25 @@ function Animate() {
 
     bird.Update();
     bird.Draw();
+
+    
+
+
+
     HandleParticles();
-    requestAnimationFrame(Animate);
+    HandleObstacles();
+
+
+    context.font = '25px Georgia';
+    context.fillStyle = 'black';
+    context.fillText(`Score: ${score}`, canvas.height - 50, 20);
+
+    if(HandleCollision()) return;
+
     angle += .1;
     hue++;
+    frame++;
+    requestAnimationFrame(Animate);
 }
 
 window.addEventListener('resize', () => {
@@ -32,9 +47,36 @@ window.addEventListener('resize', () => {
 })
 
 //Event listener for keys
-window.addEventListener('keypress', (e) => {
+window.addEventListener('keydown', (e) => {
     if (e.code === 'Space')spacePressed = true;
 });
 window.addEventListener('keyup', (e) => {
     if (e.code === 'Space') spacePressed = false;
 });
+
+function HandleCollision() {
+    
+    for(let i = 0; i < obstacleArray.length; ++i) {
+        const birdLeft = bird.position.x; 
+        const birdRight = bird.position.x + bird.size.width; 
+        const birdTop = bird.position.y; 
+        const birdBottom = bird.position.y + bird.size.height;
+
+        const obstLeft = obstacleArray[i].x;
+        const obstRight = obstacleArray[i].x + obstacleArray[i].width;
+        const obstBottomTop = canvas.height - obstacleArray[i].bottom;
+        const obstTopBottom = obstacleArray[i].top;
+
+        if(birdLeft < obstLeft && birdRight > obstRight && (birdTop < obstTopBottom || birdBottom > obstBottomTop)) {
+            context.font = '25px Georgia';
+            context.fillStyle = 'black';
+            context.fillText(`Game Over. Your Scores is: ${score}`, 160, canvas.height / 2 - 10);
+            bird.position.x = -500;
+            return true;
+        }
+        if(birdLeft < obstLeft && birdRight > obstRight && (birdTop > obstTopBottom || birdBottom < obstBottomTop)) {
+            score++;
+        }
+        
+    }
+}

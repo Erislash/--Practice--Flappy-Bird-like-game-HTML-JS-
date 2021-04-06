@@ -44,7 +44,7 @@ class Bird {
     }
 
     Flap() {
-        this.velocity.y -= 3;
+        this.velocity.y -= 2;
     }
 }
 
